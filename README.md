@@ -1,5 +1,5 @@
 # Hololive Tracker
-## Ryan Towle/James Park
+**By Ryan Towle and James Park**
 
 Tracks all Hololive videos a person has seen on Youtube, using the Youtube API.
 
