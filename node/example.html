@@ -1,4 +1,6 @@
 <script src="https://apis.google.com/js/api.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
     /**
      * Sample JavaScript code for youtube.channels.list
@@ -30,7 +32,11 @@
         })
             .then(function(response) {
                     // Handle the results here (response.result has the parsed body).
-                    document.write(response.body);
+                    let newJSON = JSON.parse(response.body);
+                    console.log("Channel: ", newJSON.items[0].snippet.title);
+                    console.log("Description: ", newJSON.items[0].snippet.description);
+                    //console.log(response.body);
+                    $("#results").append("Channel: " + newJSON.items[0].snippet.title +"<br> Description: " + newJSON.items[0].snippet.description + "<br>");
                 },
                 function(err) { console.error("Execute error", err); });
     }
@@ -40,3 +46,5 @@
 </script>
 <button onclick="authenticate().then(loadClient)">authorize and load</button>
 <button onclick="execute()">execute</button>
+
+<div id="results"></div>
