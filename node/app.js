@@ -9,10 +9,6 @@ app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname + '/example.html'));
 });
 
-app.get('activities', (req, res) => {
-	res.send(req);
-})
-
 app.listen(port, function() {
 	console.log('Server listening on port ' + port);
 });
