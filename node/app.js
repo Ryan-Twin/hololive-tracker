@@ -58,6 +58,12 @@ app.get('/auth', function(req, res) {
 	res.redirect('/home')
 });
 
+app.post('/token', function(req, res){
+	if(tokenJSON) {
+		res.json(tokenJSON)
+	}
+})
+
 app.get('/home', function(req, res){
 	res.sendFile(path.join(__dirname + '/example.html'));
 })
