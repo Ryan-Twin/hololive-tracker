@@ -61,11 +61,7 @@ app.get('/auth', function(req, res) {
 });
 
 app.get('/token', function(req, res){
-	tokenArray.forEach(token => {
-		if(token.ip === req.ip){
-			res.json(token.access_token);
-		}
-	})
+	res.json(tokenArray.find(token => token.ip === req.ip))
 })
 
 app.get('/home', function(req, res){
