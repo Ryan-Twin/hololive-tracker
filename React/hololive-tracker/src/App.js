@@ -10,26 +10,20 @@ const recommendationsList = [
     "undertale"
 ]
 
-let userToken;
-
-// TODO: ADD LOG OUT FUNCTIONALITY IF POSSIBLE
 function App() {
     const [token, setToken] = useState(null);
-
-    const loggedIn = function() {
-        return token | $.get("http://localhost:40101/auth", res => {
-            console.log(res);
-            setToken(res.body);
-            userToken = res.body;
-            return token;
-        });
+    if(!token){
+        $.get("http://localhost:40101/token", (res) => {
+            console.log(res.access_token)
+            setToken(res.access_token)
+        })
     }
-
+    console.log(token);
     return (
         <div className="App">
             <div className="home">
                 <h1 className="title"><b className={"red"}>youtube</b> shitplayer</h1>
-                {loggedIn() ? <Player/> : <Landing setToken={setToken}/>}
+                {token ? <Player/> : <Landing setToken={setToken}/>}
             </div>
         </div>
     );
@@ -38,12 +32,16 @@ function App() {
 function Landing(props) {
     const authenticate = function() {
         props.setToken("123");
-        //$.get("http://localhost:40101/", () => {
-        //    console.log("cool");
-        //})
+        $.get("http://localhost:40101/", () => {
+
+        });
+        window.open(`https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.readonly&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http%3A%2F%2Flocalhost:40101%2Fauth&response_type=code&client_id=226859199881-8aa8ifuqcmsc2do676i6k57gutmue9c8.apps.googleusercontent.com`, "_self")
+
     }
 
-    return <button type={"button"} onClick={authenticate} className={"button"}>Authenticate</button>
+    return <div className={"flex-column"}>
+        <button type={"button"} onClick={authenticate} className={"success button"}>Authenticate</button>
+    </div>
 }
 
 function Player(props) {
@@ -83,7 +81,7 @@ function Player(props) {
         recommendationsList.forEach(rec => {
             recs.push(<a onClick={() => search(rec)}>{rec}</a>);
         })
-        return recs;
+        return <div className={"recommendations flex-column"}>{recs}</div>;
     }
 
     const lastVideo = function() {
@@ -101,11 +99,11 @@ function Player(props) {
     }
 
     const player =
-            <div className="iframe-container">
-                <div className="iframe-placeholder"/>
-                {videoID && <iframe width="560" height="315" src={"https://www.youtube.com/embed/" + videoID} frameBorder="0"
-                        allowFullScreen/>}
-            </div>
+        <div className="iframe-container">
+            <div className="iframe-placeholder"/>
+            {videoID && <iframe width="560" height="315" title={"youtube-player"} src={"https://www.youtube.com/embed/" + videoID} frameBorder="0"
+                                allowFullScreen/>}
+        </div>
     const options =
         <div className={"options-flow"}>
             {loading && <h1>searching for {lastQuery}...</h1>}
