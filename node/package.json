@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@google-cloud/local-auth": "^1.0.1",
+    "cors": "^2.8.5",
     "request": "^2.88.2"
   }
 }

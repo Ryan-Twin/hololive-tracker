@@ -3,13 +3,15 @@ const app = express();
 const {google} = require('googleapis')
 const youtube = google.youtube('v3')
 const {authenticate} = require('@google-cloud/local-auth')
-const
+const cors = require('cors');
 var request = require('request');
 var fs = require('fs');
 
 var path = require('path')
 
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 40101;
+
+app.use(cors());
 
 let secrets = [];
 let code = "";
@@ -42,40 +44,36 @@ app.get('/', function(req, res){
 app.get('/auth', function(req, res) {
 	console.log(req.query.code);
 	code = req.query.code;
+	request.post(`https://oauth2.googleapis.com/token`, {form:{
+			code: code,
+			client_id: "226859199881-8aa8ifuqcmsc2do676i6k57gutmue9c8.apps.googleusercontent.com",
+			client_secret: "MKFyKLbl5au6SoCY9KWK2ZNE",
+			redirect_uri: `http://localhost:40101/auth`,
+			grant_type: "authorization_code"
+		}}, function(err, httpResponse, body){
+		if(!tokenJSON) {
+			tokenJSON = JSON.parse(body)
+		}
+	});
 	res.redirect('/home')
 });
-
-app.get('/token', function(req, res){
-	code = req.query.code;
-})
 
 app.get('/home', function(req, res){
 	res.sendFile(path.join(__dirname + '/example.html'));
 })
 
 app.get('/search/:query', function(req, res) {
-	request.post(`https://oauth2.googleapis.com/token`, {form:{
-		code: code,
-		client_id: "226859199881-8aa8ifuqcmsc2do676i6k57gutmue9c8.apps.googleusercontent.com",
-		client_secret: "MKFyKLbl5au6SoCY9KWK2ZNE",
-		redirect_uri: `http://localhost:40101/auth`,
-		grant_type: "authorization_code"
-	}}, function(err, httpResponse, body){
-		if(!tokenJSON) {
-			tokenJSON = JSON.parse(body)
-		}
-		request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${tokenJSON.access_token}`,
-			function (err, httpResponse, body2) {
-				if (body2) {
-					videoJSON = JSON.parse(body2);
-					videoIDs = [];
-					videoJSON.items.forEach(function (video) {
-						videoIDs.push(video.id.videoId);
-					})
-					res.send(videoIDs);
-				}
-			});
-	});
+	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${tokenJSON.access_token}`,
+		function (err, httpResponse, body2) {
+			if (body2) {
+				videoJSON = JSON.parse(body2);
+				videoIDs = [];
+				videoJSON.items.forEach(function (video) {
+					videoIDs.push(video.id.videoId);
+				})
+				res.send(videoIDs);
+			}
+		});
 });
 
 
