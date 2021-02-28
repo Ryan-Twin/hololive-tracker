@@ -4,7 +4,6 @@ import $ from 'jquery';
 
 const recommendationsList = [
     "amogus",
-    "shitpost status",
     "fortnite",
     "beastars",
     "undertale"
@@ -20,7 +19,7 @@ function App() {
     return (
         <div className="App">
             <div className="home">
-                <h1 className="title"><b className={"red"}>youtube</b> shitplayer</h1>
+                <h1 className="title"><b className={"red"}>youtube</b> s***player</h1>
                 {token ? <Player/> : <Landing setToken={setToken}/>}
             </div>
         </div>
@@ -55,10 +54,10 @@ function Player(props) {
 
     const search = function(query) {
         if (!query) {
-            alert("enter a shitty search query please");
+            alert("enter a s***ty search query please");
         }
         else if (query === lastQuery) {
-            alert("please enter a new shitty search query please");
+            alert("please enter a new s***ty search query please");
         }
         else {
             setLastQuery(query);
@@ -77,7 +76,7 @@ function Player(props) {
     }
 
     const recommendations = function() {
-        let recs = [<p>other shit video categories</p>];
+        let recs = [<p>other s*** video categories</p>];
         recommendationsList.forEach(rec => {
             recs.push(<a onClick={() => search(rec)}>{rec}</a>);
         })
@@ -98,9 +97,6 @@ function Player(props) {
         }
     }
 
-    console.log(videoIDs);
-    console.log(videoID);
-
     const player =
         <div className="iframe-container">
             <div className="iframe-placeholder"/>
@@ -110,8 +106,8 @@ function Player(props) {
     const options =
         <div className={"options-flow"}>
             {loading && <h1>searching for {lastQuery}...</h1>}
-            {(videoIDs && videoID) && <p>shitty video {videoIDs.indexOf(videoID) + 1} of {videoIDs.length}</p>}
-            <input type={"text"} value={searchQuery} id={"search-text"} onChange={changeSearchQuery} placeholder={"enter your shitty search"}/>
+            {(videoIDs && videoID) && <p>s***ty video {videoIDs.indexOf(videoID) + 1} of {videoIDs.length}</p>}
+            <input type={"text"} value={searchQuery} id={"search-text"} onChange={changeSearchQuery} placeholder={"enter your s***ty search"}/>
             <button type="button" onClick={lastVideo} className="success button">last video</button>
             <button type="button" id={"search-query"} onClick={() => {search(searchQuery)}} className="button" disabled={loading}>search</button>
             <button type="button" onClick={nextVideo} className="success button">next video</button>
