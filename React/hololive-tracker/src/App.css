@@ -5,7 +5,7 @@
 }
 
 .home {
-  background-color: #bdbdbd;
+  background-color: #c4c4c4;
   max-width: 40%;
   margin: auto;
   display: flex;
@@ -65,4 +65,13 @@
 
 .success {
   background-color: #ff6666 !important;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.recommendations {
+  margin-bottom: 5em;
 }
