@@ -16,9 +16,9 @@ app.use(cors());
 let secrets = [];
 let code = "";
 let tokenJSON;
+let tokenArray = [];
 let videoJSON = [];
 let videoIDs = [];
-
 
 function readAuth() {
 	fs.readFile('client_secret.json', function processClientSecrets(err, content) {
@@ -42,7 +42,7 @@ app.get('/', function(req, res){
 
 
 app.get('/auth', function(req, res) {
-	console.log(req.query.code);
+	//console.log(req.query.code);
 	code = req.query.code;
 	request.post(`https://oauth2.googleapis.com/token`, {form:{
 			code: code,
@@ -51,32 +51,47 @@ app.get('/auth', function(req, res) {
 			redirect_uri: `http://localhost:40101/auth`,
 			grant_type: "authorization_code"
 		}}, function(err, httpResponse, body){
-		if(!tokenJSON) {
 			tokenJSON = JSON.parse(body)
-		}
+			console.log(req.ip);
+			console.log(tokenJSON);
+			tokenJSON.ip = req.ip;
+			tokenArray.push(tokenJSON);
 	});
 	res.redirect('/home')
 });
+
+app.get('/token', function(req, res){
+	tokenArray.forEach(token => {
+		if(token.ip === req.ip){
+			res.json(token.access_token);
+		}
+	})
+})
 
 app.get('/home', function(req, res){
 	res.sendFile(path.join(__dirname + '/example.html'));
 })
 
-app.get('/search/:query', function(req, res) {
-	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${tokenJSON.access_token}`,
+app.get('/search/:query', function(req, res, next) {
+	let access;
+	tokenArray.forEach(token => {
+		if(token.ip === req.ip){
+			access = token.access_token;
+		}
+	})
+	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${access}`,
 		function (err, httpResponse, body2) {
 			if (body2) {
+				console.log(body2)
 				videoJSON = JSON.parse(body2);
 				videoIDs = [];
-				videoJSON.items.forEach(function (video) {
-					videoIDs.push(video.id.videoId);
-				})
-				res.send(videoIDs);
+				if(!videoJSON.error){
+					videoJSON.items.forEach(function (video) {
+						videoIDs.push(video.id.videoId);
+					})
+					res.send(videoIDs);
+				}
+				next(err);
 			}
 		});
 });
-
-
-
-
-
