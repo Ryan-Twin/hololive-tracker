@@ -3,6 +3,7 @@ const app = express();
 const {google} = require('googleapis')
 const youtube = google.youtube('v3')
 const {authenticate} = require('@google-cloud/local-auth')
+const
 var request = require('request');
 var fs = require('fs');
 
@@ -12,6 +13,7 @@ const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 
 
 let secrets = [];
 let code = "";
+let tokenJSON;
 let videoJSON = [];
 let videoIDs = [];
 
@@ -59,11 +61,14 @@ app.get('/search/:query', function(req, res) {
 		redirect_uri: `http://localhost:40101/auth`,
 		grant_type: "authorization_code"
 	}}, function(err, httpResponse, body){
-		let tokenJSON = JSON.parse(body)
+		if(!tokenJSON) {
+			tokenJSON = JSON.parse(body)
+		}
 		request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${tokenJSON.access_token}`,
 			function (err, httpResponse, body2) {
 				if (body2) {
 					videoJSON = JSON.parse(body2);
+					videoIDs = [];
 					videoJSON.items.forEach(function (video) {
 						videoIDs.push(video.id.videoId);
 					})
