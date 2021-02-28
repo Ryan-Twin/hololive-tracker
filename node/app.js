@@ -69,12 +69,7 @@ app.get('/home', function(req, res){
 })
 
 app.get('/search/:query', function(req, res, next) {
-	let access;
-	tokenArray.forEach(token => {
-		if(token.ip === req.ip){
-			access = token.access_token;
-		}
-	})
+	let access = tokenArray.find(token => token.ip === req.ip)
 	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${access}`,
 		function (err, httpResponse, body2) {
 			if (body2) {
