@@ -59,6 +59,10 @@
 
 /* Recommendations CSS */
 
+.options-flow {
+  margin-bottom: 2em;
+}
+
 .success {
   background-color: #ff6666 !important;
 }
