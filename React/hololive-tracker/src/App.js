@@ -3,7 +3,7 @@ import './App.css';
 import $ from 'jquery';
 
 const recommendationsList = [
-    "among us",
+    "amogus",
     "shitpost status",
     "fortnite",
     "beastars",
