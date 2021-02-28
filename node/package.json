@@ -10,6 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "googleapis": "^67.1.0"
+  },
+  "devDependencies": {
+    "@google-cloud/local-auth": "^1.0.1",
+    "cors": "^2.8.5",
+    "request": "^2.88.2"
   }
 }
