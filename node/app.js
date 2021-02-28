@@ -61,8 +61,6 @@ app.get('/auth', function(req, res) {
 
 app.get('/token', function(req, res){
 	tokenArray.forEach(token => console.log(token.ip))
-	console.log("pog")
-	console.log(req.ip)
 	if(tokenArray.find(token => token.ip === req.ip)){
 		res.json(tokenArray.find(token => token.ip === req.ip))
 	} else {
@@ -78,10 +76,9 @@ app.get('/home', function(req, res){
 
 app.get('/search/:query', function(req, res, next) {
 	let access = tokenArray.find(token => token.ip === req.ip)
-	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${access}`,
+	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&videoDuration=short&access_token=${access.access_token}`,
 		function (err, httpResponse, body2) {
 			if (body2) {
-				console.log(body2)
 				videoJSON = JSON.parse(body2);
 				videoIDs = [];
 				if(!videoJSON.error){

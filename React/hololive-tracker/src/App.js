@@ -14,11 +14,9 @@ function App() {
     const [token, setToken] = useState(null);
     if(!token){
         $.get("http://localhost:40101/token", (res) => {
-            console.log(res.access_token)
             setToken(res.access_token)
         })
     }
-    console.log(token);
     return (
         <div className="App">
             <div className="home">
@@ -48,7 +46,7 @@ function Player(props) {
     const [searchQuery, setSearchQuery] = useState("");
     const [lastQuery, setLastQuery] = useState("");
     const [videoID, setVideoID] = useState("");
-    const [videoIDs, setVideoIDs] = useState(["kzVVVNT4ic4", "V0mnsk2jrQw"]);
+    const [videoIDs, setVideoIDs] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const changeSearchQuery = function(e) {
@@ -65,13 +63,15 @@ function Player(props) {
         else {
             setLastQuery(query);
             setLoading(true);
-            setTimeout(() => {setLoading(false); setSearchQuery("");}, 2000);
-            //$.get("http://localhost:40101/search/:query", {query: query}, res => {
-            //    console.log(res);
-            //    setVideoIDs(res.body);
-            //    setVideoID(videoIDs[0]);
-            //    setLoading(false);
-            //})
+            $.get(`http://localhost:40101/search/${query}`, res => {
+                setVideoIDs(res.filter(ID => {
+                    return ID != null;
+                }), () => {
+                    setVideoID(videoIDs[0]);
+                });
+                setSearchQuery("");
+                setLoading(false);
+            })
 
         }
     }
@@ -97,6 +97,9 @@ function Player(props) {
             setVideoID(nextVideoID ? nextVideoID : videoIDs[0]);
         }
     }
+
+    console.log(videoIDs);
+    console.log(videoID);
 
     const player =
         <div className="iframe-container">
