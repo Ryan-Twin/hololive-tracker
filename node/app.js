@@ -37,7 +37,7 @@ app.listen(port, function() {
 
 app.get('/', function(req, res){
 	readAuth();
-	res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.readonly&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http%3A%2F%2Flocalhost:40101%2Fauth&response_type=code&client_id=226859199881-8aa8ifuqcmsc2do676i6k57gutmue9c8.apps.googleusercontent.com`)
+	//res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.readonly&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http%3A%2F%2Flocalhost:40101%2Fauth&response_type=code&client_id=226859199881-8aa8ifuqcmsc2do676i6k57gutmue9c8.apps.googleusercontent.com`)
 })
 
 
@@ -52,16 +52,24 @@ app.get('/auth', function(req, res) {
 			grant_type: "authorization_code"
 		}}, function(err, httpResponse, body){
 			tokenJSON = JSON.parse(body)
-			console.log(req.ip);
-			console.log(tokenJSON);
+
 			tokenJSON.ip = req.ip;
 			tokenArray.push(tokenJSON);
 	});
-	res.redirect('/home')
+	res.redirect('http://localhost:3000')
 });
 
 app.get('/token', function(req, res){
-	res.json(tokenArray.find(token => token.ip === req.ip))
+	tokenArray.forEach(token => console.log(token.ip))
+	console.log("pog")
+	console.log(req.ip)
+	if(tokenArray.find(token => token.ip === req.ip)){
+		res.json(tokenArray.find(token => token.ip === req.ip))
+	} else {
+		//console.log(req.ip)
+		res.json({"accessToken": ""})
+	}
+
 })
 
 app.get('/home', function(req, res){
@@ -69,12 +77,7 @@ app.get('/home', function(req, res){
 })
 
 app.get('/search/:query', function(req, res, next) {
-	let access;
-	tokenArray.forEach(token => {
-		if(token.ip === req.ip){
-			access = token.access_token;
-		}
-	})
+	let access = tokenArray.find(token => token.ip === req.ip)
 	request(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=date&q=${req.params.query}&access_token=${access}`,
 		function (err, httpResponse, body2) {
 			if (body2) {
