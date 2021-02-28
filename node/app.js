@@ -44,10 +44,11 @@ app.get('/', function(req, res){
 app.get('/auth', function(req, res) {
 	//console.log(req.query.code);
 	code = req.query.code;
+	console.log(secrets)
 	request.post(`https://oauth2.googleapis.com/token`, {form:{
 			code: code,
-			client_id: "226859199881-8aa8ifuqcmsc2do676i6k57gutmue9c8.apps.googleusercontent.com",
-			client_secret: "MKFyKLbl5au6SoCY9KWK2ZNE",
+			client_id: secrets.installed.client_id,
+			client_secret: secrets.installed.client_secret,
 			redirect_uri: `http://localhost:40101/auth`,
 			grant_type: "authorization_code"
 		}}, function(err, httpResponse, body){
